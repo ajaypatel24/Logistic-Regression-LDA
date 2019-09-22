@@ -25,6 +25,11 @@ def statisticalAnalysis(df):
     for i in range(col):
         print(str(i) + ' ' + str(df[i].mean()) + ' ' + str(df[i].max()) + ' ' + str(df[i].min()) + ' ' + str(df[i].median()) + ' ' + str(df[i].std()))
 
+#replacing binary values by 0 and 1
+def replaceBinaryValues(df):
+    df[10].replace([2, 4], [0, 1], inplace=True)
+    return df
+
 #open file and convert to matrix
 mat = np.loadtxt(open(CANCER_DATA_DIR, "rb"), dtype='str', delimiter=",")
 
@@ -32,6 +37,7 @@ mat = np.loadtxt(open(CANCER_DATA_DIR, "rb"), dtype='str', delimiter=",")
 df = pd.DataFrame(mat)
 df = cleanValues(df)
 df = strToFloat(df)
+df = replaceBinaryValues(df)
 
 #analysis
 statisticalAnalysis(df)
