@@ -1,9 +1,9 @@
 import numpy as np
 import pandas as pd
 
-#directories of the data
-WINE_DATA_DIR = 'C:/Users/Lara/workspaceF19/comp551/project1/datasets/winequality-red.csv'
-CANCER_DATA_DIR = 'C:/Users/Lara/workspaceF19/comp551/project1/datasets/breast-cancer-wisconsin.data'
+class DataPreprocessCancer:
+
+CANCER_DATA_DIR = 'breast-cancer-wisconsin.data'
 
 #drop NaN and ? from matrix
 def cleanValues(df):
