@@ -2,23 +2,50 @@ import numpy as np
 import pandas as pd 
 import matplotlib as mat 
 from math import exp
+import Wine
+from scipy.special import expit
 
 class LogisticRegression: 
 
-    def __init__(self, Input, Output, LR, GradientDescents, Weight):
-        self.Input = input
+    def __init__(self, Input, Output, LR, GradientDescents, Weight): #input (vector) output (vector) LR (Constant) GradientDescents (constant,iterations basically) weight (input constant, becomes vector)
+        self.Input = Input
         self.Output = Output
         self.LR = LR
         self.GradientDescents = GradientDescents
         self.Weight = Weight
+        self.NumberInputs = Input.shape[0]
+
 
     def sigmoid(self, prediction):
-        return 1 / (1 + np.exp ((-(prediction))))
+        #prediction = int(prediction)
+        #return 1 / (1 + np.exp ((-(prediction))))
+        return expit(prediction) #avoid overflow errors
 
 
+    def fit(self, input, output, LR, iterations):
+        w = [self.Weight]
+        for x in range (0,len(self.Input.iloc[0,:])-1):
+            w.append(self.Weight) #create array of weights 
 
-    def fit(x):
-        print(x)
+        for x in range (0, iterations):
+            w = self.updateWeight(w, self.Input, self.Output)
+
+        print(w)
+
+        result = []
+        test = 10
+        for x in range(0,iterations):
+            r = self.predict(self.Input.iloc[x,:], w)
+
+            if (r == 1):
+                result.append(1)
+            else:
+                result.append(0)
+
+        print(result) 
+        print(self.Output)
+        self.evaluate_acc(result, self.Output.iloc[0:x])
+
 
 #feature = column 
 #weight = importance
@@ -32,23 +59,64 @@ class LogisticRegression:
         else: 
             return 0
 
+
+
+
+
     def updateWeight(self, weights, input, output):
 
+        #print("update weiht", weights)
         weights = np.array(weights)
+        #print("weights np", weights)
+        cur = [0.0] * np.size(weights)
+        #print("cur", cur)
+
+        for x in range(0,len(input.iloc[:,1])):
+            h = np.multiply(input.iloc[x,:], (output.iloc[x] - self.sigmoid(np.dot(weights.T, input.iloc[x,:]))))
+            cur = np.add(cur,h)
+
+     
+        updated = weights + np.multiply(self.LR, cur)
+       
         
-        h = np.multiply(input, output - self.sigmoid(np.dot(weights.T, input)))
-        return h
+        return updated
+       
 
 
-    def evaluate_acc(self, x,y,z):
-        print(x,y,z)
+    def evaluate_acc(self, result, expected):
+        c = 0
 
-    
+        for x in range (0,len(result)-1):
+            if(result[x] == expected.iloc[x]):
+                c += 1
 
-    
-obj = LogisticRegression(1,2,3,4,5)
+        print(c / (c + len(result)) * 100)
 
-q = obj.updateWeight([3,5,6,2,8], [3,4,53,6,7], 1.0)
-t = obj.predict([1,3,4,-43], [1,3,4,2])
-print(t)
-print(np.transpose(q))
+class Wine:
+
+   
+
+    def wineBinary(self):
+        data = pd.read_csv("winequality-red.csv", sep=';')
+        counter = 0
+        for i in data.iloc[:,-1]:
+            if (float(i) > 6.0):
+                data.iat[counter,-1] = 1
+            else:
+                data.iat[counter,-1] = 0
+
+            counter += 1
+
+        g = len(data.columns)
+        c = 0
+
+        return data
+
+
+
+q = Wine()
+data = q.wineBinary()
+obj = LogisticRegression( data.iloc[:,:-1],data.iloc[:,-1],0.6,100,0)
+obj.fit(obj.Input, obj.Output, obj.LR, obj.GradientDescents)
+print("line break")
+
