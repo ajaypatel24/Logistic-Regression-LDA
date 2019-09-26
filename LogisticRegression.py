@@ -3,7 +3,7 @@ import pandas as pd
 import matplotlib as mat 
 from math import exp
 import Wine
-
+from scipy.special import expit
 
 class LogisticRegression: 
 
@@ -17,26 +17,35 @@ class LogisticRegression:
 
 
     def sigmoid(self, prediction):
-        prediction = int(prediction)
+        #prediction = int(prediction)
         #return 1 / (1 + np.exp ((-(prediction))))
-        print(prediction)
+        return expit(prediction) #avoid overflow errors
 
 
     def fit(self, input, output, LR, iterations):
         w = [self.Weight]
-        print("fit",w)
         for x in range (0,len(self.Input.iloc[0,:])-1):
             w.append(self.Weight) #create array of weights 
 
         for x in range (0, iterations):
-            print("we out here", w)
             w = self.updateWeight(w, self.Input, self.Output)
 
+        print(w)
 
+        result = []
+        test = 10
+        for x in range(0,iterations):
+            r = self.predict(self.Input.iloc[x,:], w)
 
-        print("dub", w)
-        print(self.Input.iloc[0,:])
-        
+            if (r == 1):
+                result.append(1)
+            else:
+                result.append(0)
+
+        print(result) 
+        print(self.Output)
+        self.evaluate_acc(result, self.Output.iloc[0:x])
+
 
 #feature = column 
 #weight = importance
@@ -56,30 +65,32 @@ class LogisticRegression:
 
     def updateWeight(self, weights, input, output):
 
-        print("update weiht", weights)
+        #print("update weiht", weights)
         weights = np.array(weights)
-        print("weights np", weights)
+        #print("weights np", weights)
         cur = [0.0] * np.size(weights)
-        print("cur", cur)
+        #print("cur", cur)
 
         for x in range(0,len(input.iloc[:,1])):
-            h = np.multiply(input.iloc[x,:], (output.iloc[x] - output.iloc[x])) #self.sigmoid(np.dot(weights.T, input.iloc[x,:]))))
+            h = np.multiply(input.iloc[x,:], (output.iloc[x] - self.sigmoid(np.dot(weights.T, input.iloc[x,:]))))
             cur = np.add(cur,h)
 
-        #print(self.sigmoid(np.dot(weights.T, input.iloc[x,:])))
-        print("weight pre trans", weights)
-        print("weight", weights.T)
-        print("input iloc", input.iloc[x,:])
-        #updated = weights + np.multiply(self.LR, cur)
-        #print("up", updated)
-        print("w:", weights)
-        #print("np.mult:", np.multiply(self.LR, cur))
-
+     
+        updated = weights + np.multiply(self.LR, cur)
+       
+        
+        return updated
        
 
 
-    def evaluate_acc(self, x,y,z):
-        print(x,y,z)
+    def evaluate_acc(self, result, expected):
+        c = 0
+
+        for x in range (0,len(result)-1):
+            if(result[x] == expected.iloc[x]):
+                c += 1
+
+        print(c / (c + len(result)) * 100)
 
 class Wine:
 
@@ -94,7 +105,7 @@ class Wine:
             else:
                 data.iat[counter,-1] = 0
 
-            counter+=1
+            counter += 1
 
         g = len(data.columns)
         c = 0
@@ -105,26 +116,7 @@ class Wine:
 
 q = Wine()
 data = q.wineBinary()
-
-obj = LogisticRegression( data.iloc[:,:-1],data.iloc[:,-1],0.8,3,0)
-'''
-print("in", obj.Input)
-print("out", obj.Output)
-print("LR", obj.LR)
-print("GD", obj.GradientDescents)
-'''
+obj = LogisticRegression( data.iloc[:,:-1],data.iloc[:,-1],0.6,100,0)
 obj.fit(obj.Input, obj.Output, obj.LR, obj.GradientDescents)
-#print(len(data))
-
-#q = obj.updateWeight(obj.Input, [1,2,3,4,5], [1,1,1,1,1])
-#t = obj.predict([1,3,4,-43], [1,3,4,2])
-
-
-
-#obj.fit(obj.Input, obj.Output, 0.1, 50)
-#print(t)
-#print(np.transpose(q))
-
-
 print("line break")
 
