@@ -54,45 +54,24 @@ class LogisticRegression:
 #play with weights to get bset possible
 
     def predict(self, features, weights):
-        ''''
-         #print(x)
-        sum = 0
-        for z in range(len(weights)):
-            sum = sum + weights[z] * features.iloc[z]
-        
-        print(sum)
-        probability = self.sigmoid(sum)
-        #print(probability)
-        return probability
-        '''
         prediction = np.dot(features, weights)
         return self.sigmoid(prediction)
 
-        '''
-        if (prediction >= 0.5):
-            return 1
-        else: 
-            return 0
-        '''
 
 
 
 
     def updateWeight(self, weights, input, output): #gradient descent
 
-        #print("update weiht", weights)
         weights = np.array(weights)
-        #print("weights np", weights)
-        cur = [0.0] * np.size(weights)
-        #print("cur", cur)
+        sum = [0.0] * np.size(weights)
+      
 
         for x in range(0,len(input.iloc[:,1])):
-            h = np.multiply(input.iloc[x,:], (output.iloc[x] - self.sigmoid(np.dot(weights.T, input.iloc[x,:]))))
-            cur = np.add(cur,h)
+            h = np.multiply(input.iloc[x,:], np.subtract(output.iloc[x],self.sigmoid(np.dot(weights.T, input.iloc[x,:]))))
+            sum = np.add(sum,h)
 
-     
-        
-        updated = weights + np.multiply(self.LR, cur)
+        updated = weights + np.multiply(self.LR, sum)
        
         
         return updated
@@ -132,7 +111,7 @@ class Wine:
 
 q = Wine()
 data = q.wineBinary()
-obj = LogisticRegression( data.iloc[:,:-1],data.iloc[:,-1],0.1,200,0)
+obj = LogisticRegression( data.iloc[:,:-1],data.iloc[:,-1],0.1,100,0)
 obj.fit(obj.Input, obj.Output, obj.LR, obj.GradientDescents)
 
 
