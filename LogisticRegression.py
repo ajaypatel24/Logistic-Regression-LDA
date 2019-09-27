@@ -35,7 +35,7 @@ class LogisticRegression:
         print(w)
 
         result = []
-        test = 1599
+        test = 1000
         for x in range(0,test):
             r = self.predict(self.Input.iloc[x,:], w)
 
@@ -91,27 +91,49 @@ class Wine:
 
    
 
-    def wineBinary(self):
+    def wineBinary(self): #also drops all rows that contain statistical outliers according to Q1 Q3 and IQR
         data = pd.read_csv("winequality-red.csv", sep=';')
         counter = 0
         for i in data.iloc[:,-1]:
-            if (float(i) >= 5.0):
+            if (float(i) > 5.0):
                 data.iat[counter,-1] = 1
             else:
                 data.iat[counter,-1] = 0
 
             counter += 1
 
-        g = len(data.columns)
-        c = 0
+        for i in range(0,len(data.columns)-1):
+            
+            
+            counter = 0
+            #for x in range(0,len(data.iloc[:,i])):
+            Q1 = data.iloc[:,i].quantile(0.25)
+            Q3 = data.iloc[:,i].quantile(0.75)
+            IQR = float("{0:.2f}".format(Q3-Q1))
+            counter = 0
+            for z in data.iloc[:,i].to_numpy():
+                
+                if (IQR == 0.0):
+                    #print("zero on 10")
+                    break
+                if (z > Q3 + (1.5 * IQR) or z < Q1 - (1.5 * IQR)  ):
+                    try: 
+                        data.drop([counter], inplace=True)
+                    except:
+                        continue
+                    ##print(z)
 
+                counter+=1
+            #print(Q1, Q3, IQR)
+        print("none left", data.shape[0])
         return data
 
 
 
 q = Wine()
 data = q.wineBinary()
-obj = LogisticRegression( data.iloc[:,:-1],data.iloc[:,-1],0.1,100,0)
+print(data.shape[0])
+obj = LogisticRegression( data.iloc[:,:-1],data.iloc[:,-1],-2.5,10,0)
 obj.fit(obj.Input, obj.Output, obj.LR, obj.GradientDescents)
 
 
