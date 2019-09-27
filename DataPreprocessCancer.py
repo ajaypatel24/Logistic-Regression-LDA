@@ -1,9 +1,4 @@
-import numpy as np
-import pandas as pd
-
 class DataPreprocessCancer:
-
-    #CANCER_DATA_DIR = 'breast-cancer-wisconsin.data'
 
     #drop NaN and ? from matrix
     def cleanValues(df):
@@ -29,15 +24,3 @@ class DataPreprocessCancer:
     def replaceBinaryValues(df):
         df[10].replace([2, 4], [0, 1], inplace=True)
         return df
-
-    # #open file and convert to matrix
-    # mat = np.loadtxt(open(CANCER_DATA_DIR, "rb"), dtype='str', delimiter=",")
-
-    # #convert to pandas dataframe and start cleaning
-    # df = pd.DataFrame(mat)
-    # df = cleanValues(df)
-    # df = strToFloat(df)
-    # df = replaceBinaryValues(df)
-
-    # #analysis
-    # statisticalAnalysis(df)
