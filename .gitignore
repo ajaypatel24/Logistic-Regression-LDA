@@ -13,3 +13,9 @@
 .history
 
 # End of https://www.gitignore.io/api/visualstudiocode
+
+### Python ###
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
