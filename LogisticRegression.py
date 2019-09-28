@@ -58,10 +58,6 @@ class LogisticRegression:
         prediction = np.dot(features, weights)
         return self.sigmoid(prediction)
 
-
-
-
-
     def updateWeight(self, weights, input, output): #gradient descent
 
         weights = np.array(weights)
@@ -112,14 +108,12 @@ class LogisticRegression:
             ws.append(w)
             accs.append(accuracy)
 
-
-        f = open ("result.txt", "w+")
-        f.write("10000 descents", accs)
-        f.close()
+        # f = open ("result.txt", "w+")
+        # f.write(accs)
+        # f.close()
         print("weights",  ws)
         print("array", accs)
         return [ws, accs]
-
 
     def acc(self, w, input, output):
         correct = 0
@@ -136,7 +130,6 @@ class LogisticRegression:
                 correct += 1
         return correct / (len(input.iloc[:,1])) * 100
 
-
     def evaluate_acc(self, result, expected):
         c = 0
 
@@ -147,8 +140,6 @@ class LogisticRegression:
         print(c / (c + len(result)) * 100)
 
 class Wine:
-
-   
 
     def wineBinary(self): #also drops all rows that contain statistical outliers according to Q1 Q3 and IQR
         data = pd.read_csv("winequality-red.csv", sep=';')
@@ -162,7 +153,6 @@ class Wine:
             counter += 1
 
         for i in range(0,len(data.columns)-1):
-            
             
             counter = 0
             #for x in range(0,len(data.iloc[:,i])):
@@ -187,20 +177,13 @@ class Wine:
         print("none left", data.shape[0])
         return data
 
+# q = Wine()
+# data = q.wineBinary()
+# print(data.shape[0])
+# obj = LogisticRegression( data.iloc[:,:-1],data.iloc[:,-1],0.1,100,0)
+# #obj.fit(obj.Input, obj.Output, obj.LR, obj.GradientDescents)
+# obj.divideDataset(5)
 
+# #print(obj.Output.iloc[0:10])
 
-q = Wine()
-data = q.wineBinary()
-print(data.shape[0])
-obj = LogisticRegression( data.iloc[:,:-1],data.iloc[:,-1],0.1,10000,0)
-#obj.fit(obj.Input, obj.Output, obj.LR, obj.GradientDescents)
-obj.divideDataset(5)
-
-
-#print(obj.Output.iloc[0:10])
-
-print("line break")
-
-
-
-
+# print("line break")

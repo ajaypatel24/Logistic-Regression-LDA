@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import DataPreprocessCancer as dpc
+from LogisticRegression import LogisticRegression
 
 class Experiments:
 
@@ -13,8 +14,13 @@ class Experiments:
     #convert to pandas dataframe and start cleaning
     df = pd.DataFrame(cancer_matrix)
     df = dpc.cleanValues(df)
-    df = dpc.strToFloat(df)
+    df = dpc.strToInt(df)
     df = dpc.replaceBinaryValues(df)
+    df = dpc.removeOutliers(df)
 
     #analysis
     dpc.statisticalAnalysis(df)
+
+    #logistic regression
+    lr = LogisticRegression(df.iloc[:,:-1],df.iloc[:,-1],0.1,100,0)
+    lr.divideDataset(5)
