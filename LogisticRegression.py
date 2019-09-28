@@ -21,6 +21,7 @@ class LogisticRegression:
     def sigmoid(self, prediction):
         #prediction = int(prediction)
         #return 1 / (1 + np.exp ((-(prediction))))
+        
         return expit(prediction) #avoid overflow errors
 
 
@@ -33,7 +34,7 @@ class LogisticRegression:
             w = self.updateWeight(w, self.Input, self.Output)
 
         print(w)
-
+        #w = [710, -300, 179, 291, -230, -400, -10, 400, -147, 270, 1745]
         result = []
         test = 1000
         for x in range(0,test):
@@ -68,14 +69,72 @@ class LogisticRegression:
       
 
         for x in range(0,len(input.iloc[:,1])):
+            
             h = np.multiply(input.iloc[x,:], np.subtract(output.iloc[x],self.sigmoid(np.dot(weights.T, input.iloc[x,:]))))
             sum = np.add(sum,h)
 
+        print("Sum", sum)
         updated = weights + np.multiply(self.LR, sum)
-       
+        print(updated)
         
         return updated
        
+    def W(self, training, resultTraining):
+        w = [self.Weight]
+        for x in range (0,len(self.Input.iloc[0,:])-1):
+            w.append(self.Weight) #create array of weights 
+
+        for y in range (0, self.GradientDescents):
+            w = self.updateWeight(w, training, resultTraining)
+
+        return w
+
+
+    def divideDataset(self, fold):
+        set = data.iloc[:,:-1] #all columns except for result 
+        output = data.iloc[:,-1] #output 
+        rows = len(self.Input.iloc[:,1])
+        Division = int(rows/fold)
+        ws = []
+        test = []
+        accs = []
+
+        for x in range (0, rows, Division):
+            trainingSet = self.Input.drop(self.Input.index[x:x+Division])
+            resultTraining = self.Output.drop(self.Output.index[x:x+Division])
+
+            testSetInput = self.Input.iloc[x:x+Division]
+            testSetOutput = self.Output.iloc[x:x+Division]
+
+            w = self.W(trainingSet, resultTraining)
+            accuracy = self.acc(w, testSetInput, testSetOutput)
+
+            ws.append(w)
+            accs.append(accuracy)
+
+
+        f = open ("result.txt", "w+")
+        f.write("10000 descents", accs)
+        f.close()
+        print("weights",  ws)
+        print("array", accs)
+        return [ws, accs]
+
+
+    def acc(self, w, input, output):
+        correct = 0
+
+        for x in range(0, len(input.iloc[:,1])):
+            result = 0
+            prediction = self.predict(input.iloc[x,:], w)
+            if (prediction > 0.5):
+                result = 1
+            else:
+                result = 0
+            
+            if (result == output.iloc[x]):
+                correct += 1
+        return correct / (len(input.iloc[:,1])) * 100
 
 
     def evaluate_acc(self, result, expected):
@@ -133,8 +192,9 @@ class Wine:
 q = Wine()
 data = q.wineBinary()
 print(data.shape[0])
-obj = LogisticRegression( data.iloc[:,:-1],data.iloc[:,-1],-2.5,10,0)
-obj.fit(obj.Input, obj.Output, obj.LR, obj.GradientDescents)
+obj = LogisticRegression( data.iloc[:,:-1],data.iloc[:,-1],0.1,10000,0)
+#obj.fit(obj.Input, obj.Output, obj.LR, obj.GradientDescents)
+obj.divideDataset(5)
 
 
 #print(obj.Output.iloc[0:10])
