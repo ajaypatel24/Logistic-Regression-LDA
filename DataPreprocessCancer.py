@@ -14,14 +14,15 @@ def strToInt(df):
 
 #display statistical analysis
 def statisticalAnalysis(df):
-    col = df.shape[1] + 1
-    print("Column mean max min median std")
-    for i in range(1, col):
-        print(str(i) + ' ' + str(df[i].mean()) + ' ' + str(df[i].max()) + ' ' + str(df[i].min()) + ' ' + str(df[i].median()) + ' ' + str(df[i].std()))
+    col = df.shape[1] -1
+    titles = [ "Clump Thickness", "Uniformity of Cell Size", "Uniformity of Cell Shape", "Marginal Adhesion", "Single Epithelial Cell Size", "Bare Nuclei", "Bland Chromatin", "Normal Nucleoli", "Mitoses" ]
+    print("For each of the features, here are some stats: ")
+    print("The values are all in the range of 1-10")
+    for i in range(0, col):
+        print(titles[i] + ' -> mean: ' + str(df.iloc[:,i].mean()) + ', median: ' + str(df.iloc[:,i].median()) + ', std: ' + str(df.iloc[:,i].std()) + ', max: ' + str(df.iloc[:,i].max()) + ', min: ' + str(df.iloc[:,i].min()))
 
 #replacing binary values by 0 and 1
 def replaceBinaryValues(df):
-    #df[10].replace([2, 4], [0, 1], inplace=True)
     count = 0
     for i in df.iloc[:,-1]:
             if (i < 3):
@@ -49,3 +50,11 @@ def removeOutliers(df):
                     continue
             counter+=1
     return df
+
+def dataRatio(df):
+    malignant = 0
+    total = df.shape[0]
+    for i in df.iloc[:,-1]:
+        if i > 0:
+            malignant+=1
+    return malignant/total

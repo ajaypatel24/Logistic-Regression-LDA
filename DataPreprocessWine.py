@@ -27,3 +27,18 @@ def removeOutliers(data):
                     continue
             counter+=1
     return data
+
+def statisticalAnalysis(df):
+    col = df.shape[1] -1
+    titles = [ "fixed acidity","volatile acidity","citric acid","residual sugar","chlorides","free sulfur dioxide","total sulfur dioxide","density","pH","sulphates","alcohol","quality" ]
+    print("For each of the features, here are some stats: ")
+    for i in range(0, col):
+        print(titles[i] + ' -> mean: ' + str(df.iloc[:,i].mean()) + ', median: ' + str(df.iloc[:,i].median()) + ', std: ' + str(df.iloc[:,i].std()) + ', max: ' + str(df.iloc[:,i].max()) + ', min: ' + str(df.iloc[:,i].min()))
+
+def dataRatio(df):
+    good = 0
+    total = df.shape[0]
+    for i in df.iloc[:,-1]:
+        if i > 0:
+            good+=1
+    return good/total
