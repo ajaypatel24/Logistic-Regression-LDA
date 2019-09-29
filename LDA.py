@@ -1,10 +1,8 @@
-
-
-
 import numpy as np
 import pandas as pd
 
 class LDA():
+    
     def __init__(self):
         self.w1 = None
         self.w0 = None
