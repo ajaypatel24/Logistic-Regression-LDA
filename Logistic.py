@@ -2,7 +2,6 @@ import numpy as np
 import pandas as pd 
 import matplotlib as mat 
 from math import exp
-import Wine
 import random
 from scipy.special import expit
 
@@ -19,7 +18,6 @@ class LogisticRegression:
         return expit(prediction) #avoid overflow errors
 
     def gradientDescent(self, weights, input, output): #gradient descent
-
         weights = np.array(weights)
         sum = [0.0] * len(weights)
     
@@ -27,10 +25,7 @@ class LogisticRegression:
             CalculationGradient = np.multiply(input.iloc[x,:], (np.subtract(output.iloc[x], self.sigmoid(np.dot(weights.T, input.iloc[x,:])))))
             sum = np.add(sum,CalculationGradient)
 
-        print("Sum", sum)
         weights = weights + np.multiply(self.LR, sum)
-        
-        
         return weights
        
     def W(self, training, resultTraining): #updates weights according to training and test set
@@ -40,13 +35,9 @@ class LogisticRegression:
 
         for y in range (0, self.GradientDescents): 
             w = self.gradientDescent(w, training, resultTraining)
-
         return w
 
-
-
     def fit(self, input, output, LR, iterations): #train using all helper methods
-
         weights = self.W(input, output)
         result = []
 
@@ -59,22 +50,15 @@ class LogisticRegression:
             else:
                 result.append(0)
 
-        accuracy = self.acc(weights, result, output)
+        accuracy = self.evaluate_acc(weights, result, output)
         print("acc", accuracy)
         print("result", result) 
         print(self.Output)
-        
-
-
-#feature = column 
-#weight = importance
-#play with weights to get bset possible
+        self.evaluate_acc(result, self.Output.iloc[0:x])
 
     def predict(self, features, weights):
         prediction = np.dot(features, weights)
         return self.sigmoid(prediction)
-
-
 
     def addInteractionTerm(self): #TASK 3
 
@@ -102,13 +86,14 @@ class LogisticRegression:
             trainingSet = self.Input.drop(self.Input.index[x:x+Division]) #training set, varies according to fold 
             resultTraining = self.Output.drop(self.Output.index[x:x+Division])
 
-            print("Trainset", trainingSet.shape[0])
-            print("resultset", resultTraining.shape[0])
+            # print("Size of training set: ", trainingSet.shape[0])
+            # print("Size of result set: ", resultTraining.shape[0])
+
             testSetInput = self.Input.iloc[x:x+Division] #held out test set
             testSetOutput = self.Output.iloc[x:x+Division]
 
-            print("testSetIn", testSetInput.shape[0])
-            print("testsetOut", testSetOutput.shape[0])
+            # print("Size of test set input: ", testSetInput.shape[0])
+            # print("Size of test set output: ", testSetOutput.shape[0])
             w = self.W(trainingSet, resultTraining) #use training set to get weights
             
             accuracy = self.evaluate_acc(w, testSetInput, testSetOutput) #use weights to get prediction
@@ -116,28 +101,15 @@ class LogisticRegression:
             FinalWeights.append(w)
             AccuracyArray.append(accuracy)
 
-
-        print("weights",  FinalWeights)
-        print("array", AccuracyArray)
+        #print("weights",  FinalWeights)
+        print("Accuracy over all 5 folds: ")
+        print(AccuracyArray)
         sum = 0
-        for x in range(0, len(AccuracyArray)-1):  
-            sum += AccuracyArray[x]
-        print(sum)
-        print(sum/5)
-        
+        for x in (0,len(AccuracyArray)-1):  
+            sum += x
+        print ("Average accuracy: ", sum/5)
 
-        
-
-    def acc(self,w,input,output):
-
-        correct= 0
-        for x in range(0,len(input)):
-            if(input[x] == output.iloc[x]):
-                correct+=1
-        
-        print (correct / len(input) * 100)
-
-    def evaluate_acc(self, w, input, output):   
+    def evaluate_acc(self, w, input, output):
         correct = 0
         for x in range(0, len(input.iloc[:,1])):
             result = 0
@@ -148,60 +120,10 @@ class LogisticRegression:
             else:
                 result = 0
             if (result == output.iloc[x]):
-                print("p", result)
-                print("p2", output.iloc[x])
+                # print("p", result)
+                # print("p2", output.iloc[x])
                 correct += 1
 
         print("correct", correct)
         print("len input", len(input.iloc[:,1]))
         return correct / (len(input.iloc[:,1])) * 100
-
-
-class Wine:
-    def wineBinary(self): #also drops all rows that contain statistical outliers according to Q1 Q3 and IQR
-        data = pd.read_csv("winequality-red.csv", sep=';')
-        counter = 0
-        for i in data.iloc[:,-1]:
-            if (float(i) > 5.0):
-                data.iat[counter,-1] = 1
-            else:
-                data.iat[counter,-1] = 0
-
-            counter += 1
-
-        
-        for i in range(0,len(data.columns)-1):
-            counter = 0
-            Q1 = data.iloc[:,i].quantile(0.25)
-            Q3 = data.iloc[:,i].quantile(0.75)
-            IQR = float("{0:.2f}".format(Q3-Q1))
-            counter = 0
-            for z in data.iloc[:,i].to_numpy():
-                
-                if (IQR == 0.0):
-                    break
-                if (z > Q3 + (1.5 * IQR) or z < Q1 - (1.5 * IQR)  ):
-                    try: 
-                        data.drop([counter], inplace=True)
-                    except:
-                        continue
-                   
-
-                counter+=1
-        return data
-
-
-
-WineClean = Wine()
-data = WineClean.wineBinary()
-print(data.shape[0])
-obj = LogisticRegression(data,0.11,100)
-#obj.addInteractionTerm() #TASK 3
-#obj.fit(obj.Input, obj.Output, obj.LR, obj.GradientDescents)
-obj.crossValidation(5)
-
-
-print("line break")
-
-
-
