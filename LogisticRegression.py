@@ -16,14 +16,8 @@ class LogisticRegression:
         self.Weight = Weight
         self.NumberInputs = Input.shape[0]
 
-
-
     def sigmoid(self, prediction):
-        #prediction = int(prediction)
-        #return 1 / (1 + np.exp ((-(prediction))))
-        
         return expit(prediction) #avoid overflow errors
-
 
     def fit(self, input, output, LR, iterations): #train
         w = [self.Weight]
@@ -34,7 +28,7 @@ class LogisticRegression:
             w = self.updateWeight(w, self.Input, self.Output)
 
         print(w)
-        #w = [710, -300, 179, 291, -230, -400, -10, 400, -147, 270, 1745]
+        #w = [823.898, -70.292, 82.326, 424.4, -2.0, 2244.47, -1103.2066, 78.6454, 267.8300, 142.379881, 1779.342688]
         result = []
         test = 200
         for x in range(0,test):
@@ -58,22 +52,42 @@ class LogisticRegression:
         prediction = np.dot(features, weights)
         return self.sigmoid(prediction)
 
+
+
+    def addInteractionTerm(self):
+
+        CitricPH = []
+        input = self.Input
+        CitricAcid = input["citric acid"].values
+        PH = input["pH"].values
+        
+        for x in range(0, input.shape[0]):
+            interact = CitricAcid[x] * PH[x]
+            CitricPH.append(interact)
+
+        input['CitricPH'] = CitricPH
+
+        self.input = input
+
+
+
     def updateWeight(self, weights, input, output): #gradient descent
 
         weights = np.array(weights)
-        sum = [0.0] * np.size(weights)
+        sum = [0.0] * len(weights)
       
 
         for x in range(0,len(input.iloc[:,1])):
             
-            h = np.multiply(input.iloc[x,:], np.subtract(output.iloc[x],self.sigmoid(np.dot(weights.T, input.iloc[x,:]))))
+
+            h = np.multiply(input.iloc[x,:], (np.subtract(output.iloc[x],self.sigmoid(np.dot(weights.T, input.iloc[x,:])))))
             sum = np.add(sum,h)
 
         print("Sum", sum)
-        updated = weights + np.multiply(self.LR, sum)
-        print(updated)
+        weights = weights + np.multiply(self.LR, sum)
+        print(weights)
         
-        return updated
+        return weights
        
     def W(self, training, resultTraining):
         w = [self.Weight]
@@ -103,43 +117,56 @@ class LogisticRegression:
             testSetOutput = self.Output.iloc[x:x+Division]
 
             w = self.W(trainingSet, resultTraining)
+            #w = [823.898, -70.292, 82.326, 424.4, -2.0, 2244.47, -1103.2066, 78.6454, 267.8300, 142.379881, 1779.342688]
+            #w= [0,0,0,0,0,0,0,0,0,0,0]
             accuracy = self.acc(w, testSetInput, testSetOutput)
 
             ws.append(w)
             accs.append(accuracy)
 
-        # f = open ("result.txt", "w+")
-        # f.write(accs)
-        # f.close()
+
+        #f = open ("result.txt", "w+")
+       # f.write(accs)
+        #f.close()
         print("weights",  ws)
         print("array", accs)
         return [ws, accs]
+
 
     def acc(self, w, input, output):
         correct = 0
 
         for x in range(0, len(input.iloc[:,1])):
             result = 0
+            r = []
             prediction = self.predict(input.iloc[x,:], w)
             if (prediction > 0.5):
                 result = 1
             else:
                 result = 0
-            
             if (result == output.iloc[x]):
+                print("p", result)
+                print("p2", output.iloc[x])
                 correct += 1
+
+        print("correct", correct)
+        print("len input", len(input.iloc[:,1]))
         return correct / (len(input.iloc[:,1])) * 100
+
 
     def evaluate_acc(self, result, expected):
         c = 0
 
         for x in range (0,len(result)-1):
             if(result[x] == expected.iloc[x]):
+                
                 c += 1
 
         print(c / (c + len(result)) * 100)
 
 class Wine:
+
+   
 
     def wineBinary(self): #also drops all rows that contain statistical outliers according to Q1 Q3 and IQR
         data = pd.read_csv("winequality-red.csv", sep=';')
@@ -152,7 +179,9 @@ class Wine:
 
             counter += 1
 
+        
         for i in range(0,len(data.columns)-1):
+            
             
             counter = 0
             #for x in range(0,len(data.iloc[:,i])):
@@ -177,12 +206,16 @@ class Wine:
         print("none left", data.shape[0])
         return data
 
+
+
 # q = Wine()
 # data = q.wineBinary()
 # print(data.shape[0])
 # obj = LogisticRegression( data.iloc[:,:-1],data.iloc[:,-1],0.1,100,0)
-# #obj.fit(obj.Input, obj.Output, obj.LR, obj.GradientDescents)
-# obj.divideDataset(5)
+
+# #obj.divideDataset(5)
+# #obj.addInteractionTerm()
+# obj.fit(obj.Input, obj.Output, obj.LR, obj.GradientDescents)
 
 # #print(obj.Output.iloc[0:10])
 

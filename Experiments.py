@@ -3,6 +3,7 @@ import pandas as pd
 import DataPreprocessCancer as dpc
 import DataPreprocessWine as dpw
 from Logistic import LogisticRegression
+import LinearDiscriminantAnalysis as lda
 
 class Experiments:
 
@@ -27,9 +28,23 @@ class Experiments:
     #analysis
     dpc.statisticalAnalysis(cancer_df)
 
-    #logistic regression on cancer
-    lr = LogisticRegression(cancer_df.iloc[:,:-1],cancer_df.iloc[:,-1],0.1,100,0)
-    #lr.divideDataset(5)
-    lr.fit(lr.Input, lr.Output, lr.LR, lr.GradientDescents)
+    # #logistic regression on cancer
+    # lr = LogisticRegression(cancer_df.iloc[:,:-1],cancer_df.iloc[:,-1],0.1,100,0)
+    # #lr.divideDataset(5)
+    # lr.fit(lr.Input, lr.Output, lr.LR, lr.GradientDescents)
+
+    #LDA on cancer
+    results = lda.k_fold(cancer_df, 5)
+    avg = np.mean(results)
+    std = np.std(results)
+    print(avg)
+    print(std)
+
+    #LDA on wine
+    results = lda.k_fold(wine_df, 5)
+    avg = np.mean(results)
+    std = np.std(results)
+    print(avg)
+    print(std)
 
     #logistic regression on wine
