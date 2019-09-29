@@ -1,8 +1,8 @@
 import numpy as np
 import pandas as pd
 
-class LDA():
-    
+class LinearDiscriminantAnalysis:
+
     def __init__(self):
         self.w1 = None
         self.w0 = None
@@ -49,13 +49,6 @@ class LDA():
         X_test = X_test.to_numpy()
         return [1 if np.dot(x,self.w1) + self.w0 > 0 else 0 for x in X_test]
 
-
-data = pd.read_csv("winequality-red.csv", sep=';').astype('float32')
-X_train = data.iloc[:, :len(data.columns)-1]
-y_train = data.iloc[:, len(data.columns)-1:].values
-y_train = [0 if i < 6 else 1 for i in y_train]
-data['quality'] = y_train
-
 def k_fold(data, n):
     results = []
     fold_length = int(len(data)/5)
@@ -77,7 +70,7 @@ def k_fold(data, n):
         X_train = temp_data_test.iloc[:, :len(temp_data_train.columns)-1]
         y_train = temp_data_test.iloc[:, len(temp_data_train.columns)-1:].values
         
-        lda = LDA()
+        lda = LinearDiscriminantAnalysis()
         lda.fit(X_train, y_train)
         y_pred = lda.predict(X_test)
         
@@ -87,13 +80,3 @@ def k_fold(data, n):
                 correct += 1 
         results.append(correct/len(y_train))
     return results
-        
-results = k_fold(data, 5)
-avg = np.mean(results)
-std = np.std(results)
-print(avg)
-print(std)
-
-
-
-
