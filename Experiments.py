@@ -35,7 +35,8 @@ print("Percentage of malignant tumors: " + str(dpc.dataRatio(cancer_df)))
 
 #logistic regression on cancer
 print("Performing logistic regression on the cancer dataset -------------------------------------------------------------------")
-lrc = LogisticRegression(cancer_df,0.11,50)
+lrc = LogisticRegression(cancer_df,0.11,100)
+lrc.crossValidation(5)
 lrc.fit(lrc.Input, lrc.Output, lrc.LR, lrc.GradientDescents)
 
 #LDA on cancer
@@ -68,8 +69,8 @@ dpw.statisticalAnalysis(wine_df)
 print("Percentage of good wines: " + str(dpw.dataRatio(wine_df)))
 
 #logistic regression on wine
-lrw = LogisticRegression(wine_df,0.11,50)
-#lrw.crossValidation(5)
+lrw = LogisticRegression(wine_df,0.11,100)
+lrw.crossValidation(5)
 
 #LDA on wine
 print("Performing linear discriminant analysis on the wine dataset ------------------------------------------------------------")
