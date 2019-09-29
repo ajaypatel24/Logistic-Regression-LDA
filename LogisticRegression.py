@@ -59,11 +59,11 @@ class LogisticRegression:
             else:
                 result.append(0)
 
-        accuracy = self.evaluate_acc(weights, result, output)
+        accuracy = self.acc(weights, result, output)
         print("acc", accuracy)
         print("result", result) 
         print(self.Output)
-        self.evaluate_acc(result, self.Output.iloc[0:x])
+        
 
 
 #feature = column 
@@ -120,15 +120,24 @@ class LogisticRegression:
         print("weights",  FinalWeights)
         print("array", AccuracyArray)
         sum = 0
-        for x in (0,len(AccuracyArray)-1):  
-            sum += x
-
-        print ("average: ", sum/5)
+        for x in range(0, len(AccuracyArray)-1):  
+            sum += AccuracyArray[x]
+        print(sum)
+        print(sum/5)
+        
 
         
 
+    def acc(self,w,input,output):
 
-    def evaluate_acc(self, w, input, output):
+        correct= 0
+        for x in range(0,len(input)):
+            if(input[x] == output.iloc[x]):
+                correct+=1
+        
+        print (correct / len(input) * 100)
+
+    def evaluate_acc(self, w, input, output):   
         correct = 0
         for x in range(0, len(input.iloc[:,1])):
             result = 0
@@ -183,17 +192,14 @@ class Wine:
 
 
 
-q = Wine()
-data = q.wineBinary()
+WineClean = Wine()
+data = WineClean.wineBinary()
 print(data.shape[0])
-obj = LogisticRegression(data,0.11,50)
-
-
-
-#obj.addInteractionTerm()
+obj = LogisticRegression(data,0.11,100)
+#obj.addInteractionTerm() #TASK 3
 #obj.fit(obj.Input, obj.Output, obj.LR, obj.GradientDescents)
 obj.crossValidation(5)
-#print(obj.Output.iloc[0:10])
+
 
 print("line break")
 
