@@ -35,17 +35,16 @@ print("Percentage of malignant tumors: " + str(dpc.dataRatio(cancer_df)))
 
 #logistic regression on cancer
 print("Performing logistic regression on the cancer dataset -------------------------------------------------------------------")
-lr = LogisticRegression(cancer_df.iloc[:,:-1],cancer_df.iloc[:,-1],0.1,100,0)
-#lr.divideDataset(5)
-# lr.fit(lr.Input, lr.Output, lr.LR, lr.GradientDescents)
+lrc = LogisticRegression(cancer_df,0.11,50)
+lrc.fit(lrc.Input, lrc.Output, lrc.LR, lrc.GradientDescents)
 
 #LDA on cancer
 print("Performing linear discriminant analysis on the cancer dataset ----------------------------------------------------------")
-results = lda.k_fold(cancer_df, 5)
-avg = np.mean(results)
-std = np.std(results)
+results_c = lda.k_fold(cancer_df, 5)
+avg = np.mean(results_c)
+std = np.std(results_c)
 print("The accuracy of each of the 5 folds are: ")
-print(results)
+print(results_c)
 print("The average accuracy over the 5 folds is: " + str(avg))
 print("With a standard deviation of " + str(std))
 
@@ -69,14 +68,15 @@ dpw.statisticalAnalysis(wine_df)
 print("Percentage of good wines: " + str(dpw.dataRatio(wine_df)))
 
 #logistic regression on wine
-lr = LogisticRegression(wine_df.iloc[:,:-1],wine_df.iloc[:,-1],0.1,100,0)
+lrw = LogisticRegression(wine_df,0.11,50)
+#lrw.crossValidation(5)
 
 #LDA on wine
 print("Performing linear discriminant analysis on the wine dataset ------------------------------------------------------------")
-results = lda.k_fold(wine_df, 5)
-avg = np.mean(results)
-std = np.std(results)
+results_w = lda.k_fold(wine_df, 5)
+avg = np.mean(results_w)
+std = np.std(results_w)
 print("The accuracy of each of the 5 folds are: ")
-print(results)
+print(results_w)
 print("The average accuracy over the 5 folds is: " + str(avg))
 print("With a standard deviation of " + str(std))
