@@ -1,9 +1,11 @@
 import numpy as np
 import pandas as pd
+
 import DataPreprocessCancer as dpc
 import DataPreprocessWine as dpw
-from Logistic import LogisticRegression
 import LinearDiscriminantAnalysis as lda
+from Logistic import LogisticRegression
+
 
 class Experiments:
 
